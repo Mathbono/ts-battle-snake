@@ -1,7 +1,8 @@
-import bodyParser from 'body-parser';
 import express, {Request, Response} from 'express';
+import bodyParser from 'body-parser';
 
-import {SnakeInfo, Move, Direction, GameRequest} from './types';
+import {SnakeInfo, GameRequest} from './types';
+import handleMove from './move';
 
 const PORT = process.env.PORT || 3000;
 
@@ -35,18 +36,6 @@ function handleStart(request: GameRequest, response: Response) {
 
 	console.log('START');
 	response.status(200).send('ok');
-}
-
-function handleMove(request: GameRequest, response: Response<Move>) {
-	const gameData = request.body;
-
-	const possibleMoves: Direction[] = ['up', 'down', 'left', 'right'];
-	const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-
-	console.log('MOVE: ' + move);
-	response.status(200).send({
-		move: move
-	});
 }
 
 function handleEnd(request: GameRequest, response: Response) {
