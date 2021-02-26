@@ -73,10 +73,10 @@ const data: GameState = {
 };
 
 export default function handleMove(
-	request?: GameRequest,
-	response?: Response<Move>
+	request: GameRequest,
+	response: Response<Move>
 ) {
-	//const data = request.body;
+	const data = request.body;
 
 	const others = data.board.snakes.filter(
 		snake => snake.name !== data.you.name
@@ -105,28 +105,36 @@ export default function handleMove(
 			break;
 	}
 
-	const possibleMoves: Direction[] = ['up', 'down', 'left', 'right'];
+	let possibleMoves: Direction[] = ['up', 'down', 'left', 'right'];
 	const forbiddenMoves = {
 		up: 'down',
 		down: 'up',
 		left: 'right',
 		right: 'left'
 	};
-	possibleMoves.filter(direction => direction !== forbiddenMoves[lastMove]);
+	possibleMoves = possibleMoves.filter(
+		direction => direction !== forbiddenMoves[lastMove]
+	);
 	switch (snake.head.x) {
 		case data.board.width - 1:
-			possibleMoves.filter(direction => direction !== 'right');
+			possibleMoves = possibleMoves.filter(
+				direction => direction !== 'right'
+			);
 			break;
 		case 0:
-			possibleMoves.filter(direction => direction !== 'left');
+			possibleMoves = possibleMoves.filter(
+				direction => direction !== 'left'
+			);
 			break;
 	}
 	switch (snake.head.y) {
 		case data.board.height - 1:
-			possibleMoves.filter(direction => direction !== 'up');
+			possibleMoves = possibleMoves.filter(direction => direction !== 'up');
 			break;
 		case 0:
-			possibleMoves.filter(direction => direction !== 'down');
+			possibleMoves = possibleMoves.filter(
+				direction => direction !== 'down'
+			);
 			break;
 	}
 
@@ -134,7 +142,8 @@ export default function handleMove(
 
 	console.log('POSSIBLE MOVES: ', possibleMoves);
 	console.log('MOVE: ', move);
-	//response.status(200).send({move});
+	console.log('MOVED');
+	response.status(200).send({move});
 }
 
-handleMove();
+//handleMove();
