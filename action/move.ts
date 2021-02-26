@@ -1,91 +1,23 @@
 import {Response} from 'express';
 
-import {Move, Direction, GameRequest, GameState} from './types';
-
-const data: GameState = {
-	game: {
-		id: 'game-00fe20da-94ad-11ea-bb37',
-		ruleset: {
-			name: 'standard',
-			version: 'v.1.2.3'
-		},
-		timeout: 500
-	},
-	turn: 14,
-	board: {
-		height: 11,
-		width: 11,
-		food: [
-			{x: 5, y: 5},
-			{x: 9, y: 0},
-			{x: 2, y: 6}
-		],
-		hazards: [{x: 3, y: 2}],
-		snakes: [
-			{
-				id: 'snake-508e96ac-94ad-11ea-bb37',
-				name: 'My Snake',
-				health: 54,
-				body: [
-					{x: 0, y: 0},
-					{x: 1, y: 0},
-					{x: 2, y: 0}
-				],
-				latency: '111',
-				head: {x: 0, y: 0},
-				length: 3,
-				shout: 'why are we shouting??',
-				squad: ''
-			},
-			{
-				id: 'snake-b67f4906-94ae-11ea-bb37',
-				name: 'Another Snake',
-				health: 16,
-				body: [
-					{x: 5, y: 4},
-					{x: 5, y: 3},
-					{x: 6, y: 3},
-					{x: 6, y: 2}
-				],
-				latency: '222',
-				head: {x: 5, y: 4},
-				length: 4,
-				shout: "I'm not really sure...",
-				squad: ''
-			}
-		]
-	},
-	you: {
-		id: 'snake-508e96ac-94ad-11ea-bb37',
-		name: 'My Snake',
-		health: 54,
-		body: [
-			{x: 0, y: 0},
-			{x: 1, y: 0},
-			{x: 2, y: 0}
-		],
-		latency: '111',
-		head: {x: 0, y: 0},
-		length: 3,
-		shout: 'why are we shouting??',
-		squad: ''
-	}
-};
+import {Move, Direction, GameRequest} from '../types';
+import {data} from '../data/data-mock';
+import isDeadEnd from './isDeadEnd';
 
 export default function handleMove(
 	request: GameRequest,
 	response: Response<Move>
 ) {
 	const data = request.body;
-
 	const others = data.board.snakes.filter(
 		snake => snake.name !== data.you.name
 	);
 	const snake = data.you;
+
+	// Ne pas revenir d'où je viens
 	const diffX: number = snake.body[0].x - snake.body[1].x;
 	const diffY: number = snake.body[0].y - snake.body[1].y;
 	let lastMove: Direction;
-
 	switch (diffX) {
 		case 1:
 			lastMove = 'right';
@@ -104,7 +36,6 @@ export default function handleMove(
 			lastMove = 'left';
 			break;
 	}
-
 	let possibleMoves: Direction[] = ['up', 'down', 'left', 'right'];
 	const forbiddenMoves = {
 		up: 'down',
@@ -138,12 +69,50 @@ export default function handleMove(
 			break;
 	}
 
+	// J'atteins le corps du serpent : impasse ?
+	for (let possibleMove of possibleMoves) {
+		let seeX: number;
+		let seeY: number;
+		switch (possibleMove) {
+			case 'up':
+				seeX = snake.head.x;
+				seeY = snake.head.y + 1;
+				break;
+			case 'down':
+				seeX = snake.head.x;
+				seeY = snake.head.y - 1;
+				break;
+			case 'left':
+				seeX = snake.head.x - 1;
+				seeY = snake.head.y;
+				break;
+			case 'right':
+				seeX = snake.head.x + 1;
+				seeY = snake.head.y;
+				break;
+		}
+		if (snake.body.find(coord => coord.x === seeX && coord.y === seeY)) {
+			possibleMoves = possibleMoves.filter(
+				direction => direction !== possibleMove
+			);
+			for (let possibleMove of possibleMoves) {
+				if (isDeadEnd(possibleMove)) {
+					possibleMoves = possibleMoves.filter(
+						direction => direction !== possibleMove
+					);
+				}
+			}
+		}
+	}
+
 	const move = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
 
-	console.log('POSSIBLE MOVES: ', possibleMoves);
-	console.log('MOVE: ', move);
-	console.log('MOVED');
-	response.status(200).send({move});
+	console.log('Turn: ', data.turn);
+	console.log('Possible moves: ', possibleMoves);
+	if (move) {
+		console.log('Move: ', move.toUpperCase());
+		response.status(200).send({move});
+	}
 }
 
 //handleMove();

@@ -2,7 +2,7 @@ import express, {Request, Response} from 'express';
 import bodyParser from 'body-parser';
 
 import {SnakeInfo, GameRequest} from './types';
-import handleMove from './move';
+import handleMove from './action/move';
 
 const PORT = process.env.PORT || 3000;
 
