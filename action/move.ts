@@ -1,7 +1,7 @@
 import {Response} from 'express';
 
 import {Move, Direction, GameRequest} from '../types';
-import {data} from '../data/data-mock';
+//import {data} from '../data/data-mock';
 import isDeadEnd from './isDeadEnd';
 
 export default function handleMove(
@@ -14,7 +14,7 @@ export default function handleMove(
 	);
 	const snake = data.you;
 
-	// Ne pas revenir d'où je viens
+	// Ne pas aller en arrière
 	const diffX: number = snake.body[0].x - snake.body[1].x;
 	const diffY: number = snake.body[0].y - snake.body[1].y;
 	let lastMove: Direction;
@@ -69,7 +69,7 @@ export default function handleMove(
 			break;
 	}
 
-	// J'atteins le corps du serpent : impasse ?
+	// J'atteins le corps du serpent ? Si oui, éviter l'impasse
 	for (let possibleMove of possibleMoves) {
 		let seeX: number;
 		let seeY: number;
@@ -96,7 +96,14 @@ export default function handleMove(
 				direction => direction !== possibleMove
 			);
 			for (let possibleMove of possibleMoves) {
-				if (isDeadEnd(possibleMove)) {
+				if (
+					isDeadEnd(
+						data.board.width,
+						data.board.height,
+						data.you.body,
+						possibleMove
+					)
+				) {
 					possibleMoves = possibleMoves.filter(
 						direction => direction !== possibleMove
 					);

@@ -9,7 +9,7 @@ export const data: GameState = {
 		},
 		timeout: 500
 	},
-	turn: 14,
+	turn: 1,
 	board: {
 		height: 11,
 		width: 11,
@@ -25,13 +25,20 @@ export const data: GameState = {
 				name: 'My Snake',
 				health: 54,
 				body: [
-					{x: 0, y: 0},
-					{x: 1, y: 0},
-					{x: 2, y: 0}
+					{x: 2, y: 1},
+					{x: 3, y: 1},
+					{x: 3, y: 2},
+					{x: 3, y: 3},
+					{x: 3, y: 4},
+					{x: 2, y: 4},
+					{x: 1, y: 4},
+					{x: 1, y: 3},
+					{x: 1, y: 2},
+					{x: 1, y: 1}
 				],
 				latency: '111',
-				head: {x: 0, y: 0},
-				length: 3,
+				head: {x: 2, y: 1},
+				length: 10,
 				shout: 'why are we shouting??',
 				squad: ''
 			},
@@ -58,13 +65,20 @@ export const data: GameState = {
 		name: 'My Snake',
 		health: 54,
 		body: [
-			{x: 0, y: 0},
-			{x: 1, y: 0},
-			{x: 2, y: 0}
+			{x: 2, y: 1},
+			{x: 3, y: 1},
+			{x: 3, y: 2},
+			{x: 3, y: 3},
+			{x: 3, y: 4},
+			{x: 2, y: 4},
+			{x: 1, y: 4},
+			{x: 1, y: 3},
+			{x: 1, y: 2},
+			{x: 1, y: 1}
 		],
 		latency: '111',
-		head: {x: 0, y: 0},
-		length: 3,
+		head: {x: 2, y: 1},
+		length: 10,
 		shout: 'why are we shouting??',
 		squad: ''
 	}
