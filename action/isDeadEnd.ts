@@ -99,13 +99,18 @@ export default function isDeadEnd(
 	headX = initialHeadX;
 	headY = initialHeadY;
 	do {
-		while (shouldChangeDirection(move, body, headX, headY) === true) {
-			move = changeDirection(move);
-		}
-		[headX, headY] = forward(move, headX, headY);
-		if (isPerimeter(boardX, boardY, headX, headY)) {
+		if (isPerimeter(boardX, boardY, headX, headY) === true) {
 			return false;
 		}
+		let counter: number = 4;
+		while (shouldChangeDirection(move, body, headX, headY) === true) {
+			move = changeDirection(move);
+			counter--;
+			if (counter === 0) {
+				return true;
+			}
+		}
+		[headX, headY] = forward(move, headX, headY);
 	} while (headX !== initialHeadX || headY !== initialHeadY);
 	return true;
 }

@@ -46,6 +46,8 @@ export default function handleMove(
 	possibleMoves = possibleMoves.filter(
 		direction => direction !== forbiddenMoves[lastMove]
 	);
+
+	// Ne pas sortir du board
 	switch (snake.head.x) {
 		case data.board.width - 1:
 			possibleMoves = possibleMoves.filter(
@@ -69,7 +71,8 @@ export default function handleMove(
 			break;
 	}
 
-	// J'atteins le corps du serpent ? Si oui, éviter l'impasse
+	// Ne pas toucher le serpent
+	// Si contact frontal, éviter l'impasse
 	for (let possibleMove of possibleMoves) {
 		let seeX: number;
 		let seeY: number;
@@ -95,18 +98,20 @@ export default function handleMove(
 			possibleMoves = possibleMoves.filter(
 				direction => direction !== possibleMove
 			);
-			for (let possibleMove of possibleMoves) {
-				if (
-					isDeadEnd(
-						data.board.width,
-						data.board.height,
-						data.you.body,
-						possibleMove
-					)
-				) {
-					possibleMoves = possibleMoves.filter(
-						direction => direction !== possibleMove
-					);
+			if (possibleMove === lastMove) {
+				for (let possibleMove of possibleMoves) {
+					if (
+						isDeadEnd(
+							data.board.width,
+							data.board.height,
+							data.you.body,
+							possibleMove
+						) === true
+					) {
+						possibleMoves = possibleMoves.filter(
+							direction => direction !== possibleMove
+						);
+					}
 				}
 			}
 		}
